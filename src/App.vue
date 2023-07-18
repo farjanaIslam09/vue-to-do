@@ -16,14 +16,14 @@ const sortedTodoList = computed(() => [...toDoList.value].sort((a, b) => {
 }))
 
 const getDuplicateItem = computed(() => {
-  let duplicate = toDoList.value.find(td => td.item === toDo.value)
+  let duplicate = toDoList.value.find(td => td.item.toLowerCase() === toDo.value.toLowerCase())
   return duplicate;
 })
 
 // ADD TO DO
 const submitToDo = () => {
   // SAVE NEW TO DO
-  if(editTodo.value === null){
+  if(editTodo.value === null && !getDuplicateItem.value){
     if(toDo.value.trim() !== ''){
       toDoList.value.push({
         id: itemId.value += 1,
