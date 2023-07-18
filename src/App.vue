@@ -11,7 +11,7 @@ const error = ref({
 })
 
 // SORTING TO DO LIST
-const toDosByAsc = computed(() => [...toDoList.value].sort((a, b) => {
+const sortedTodoList = computed(() => [...toDoList.value].sort((a, b) => {
   return b.createdAt - a.createdAt;
 }))
 
@@ -31,7 +31,7 @@ const submitToDo = () => {
         completed: false,
         createdAt: new Date().getTime()
       })
-    
+      toDo.value = ''
     }else {
       error.value.emptyTodo = 'Please enter a value'
     }
@@ -44,13 +44,13 @@ const submitToDo = () => {
 
   // TO SAVE UPDATED TO DO
   if (editTodo.value !== null){
-  const items = toDosByAsc.value.find(td => td.id === editTodo.value)
+  const items = sortedTodoList.value.find(td => td.id === editTodo.value)
   items.item = toDo.value
   editTodo.value = null
   toDo.value = ''
   return
   }
-  toDo.value = ''
+  
 }
 
 // SETTING ERROR
@@ -74,13 +74,13 @@ watch(toDoList, newVal => {
 
 
 const updateTodo = (index) => {
-  toDo.value = toDosByAsc.value[index].item
-  editTodo.value = toDosByAsc.value[index].id
+  toDo.value = sortedTodoList.value[index].item
+  editTodo.value = sortedTodoList.value[index].id
 }
 
 const deleteTodo = (item) => {
   toDoList.value = toDoList.value.filter(todo => todo != item)
-}              
+}
 
 onMounted(() => {
   toDoList.value = JSON.parse(localStorage.getItem('todos')) || []
@@ -101,13 +101,13 @@ onMounted(() => {
           <p v-if="error.duplicate" class="text-red-600 pb-4">{{ error.duplicate }}</p>
         </div>
         <template v-if="toDoList.length">
-          <div v-for="(todo, index) in toDosByAsc" :key="index"  class="mt-4 p-2 rounded-md bg-purple-50">
+          <div v-for="(todo, index) in sortedTodoList" :key="index"  class="mt-4 p-2 rounded-md bg-purple-50">
             <div class="flex justify-between items-center">
               <div class="flex gap-2 items-center">
                 <div>
                   <input type="checkbox" v-model="todo.completed" class="checkbox-bg">
                 </div>
-                <p class="font-semibold text-base capitalize" :class="todo.completed && 'opacity-40'">{{ todo.item }}</p>
+                <p class="font-medium text-sm capitalize" :class="todo.completed && 'opacity-40'">{{ todo.item }}</p>
               </div>
               <div class="flex items-center gap-2">
                 <button @click="updateTodo(index)" :disabled="todo.completed">
