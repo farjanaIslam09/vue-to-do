@@ -105,7 +105,7 @@ onMounted(() => {
             <div class="flex justify-between items-center">
               <div class="flex gap-2 items-center">
                 <div>
-                  <input type="checkbox" v-model="todo.completed">
+                  <input type="checkbox" v-model="todo.completed" class="checkbox-bg">
                 </div>
                 <p class="font-semibold text-base capitalize" :class="todo.completed && 'opacity-40'">{{ todo.item }}</p>
               </div>
@@ -130,7 +130,9 @@ onMounted(() => {
 </template>
 
 <style scoped>
-
+.checkbox-bg {
+  accent-color: rgb(85, 9, 85);
+}
 </style>
 
 
