@@ -11,9 +11,11 @@
           <p v-if="error.emptyTodo" class="text-red-600 pb-4">{{ error.emptyTodo }}</p>
           <p v-if="error.duplicate" class="text-red-600 pb-4">{{ error.duplicate }}</p>
         </div>
-        <template v-if="toDoList.length">
+      
+        <template v-if="sortedTodoList.length">
           <div v-for="(todo, index) in sortedTodoList" :key="index"  class="mt-4 p-2 rounded-md bg-purple-50">
-            <div class="flex justify-between items-center">
+            <TodoList :todo="todo" :index="index" />
+            <!-- <div class="flex justify-between items-center">
               <div class="flex gap-2 items-center">
                 <div>
                   <input type="checkbox" v-model="todo.completed" class="checkbox-bg">
@@ -32,7 +34,7 @@
                 </svg>
               </button>
               </div>
-            </div>
+            </div> -->
           </div>
         </template>
       </div>
@@ -41,10 +43,12 @@
 </template>
 
 <script setup>
+import TodoList from './TodoList.vue';
 import { ref, onMounted, computed, watch } from 'vue';
 
 const toDo = ref('');
 const toDoList = ref([]);
+const sortedTodoList = ref([]);
 const itemId = ref(0)
 const editTodo = ref(null);
 const error = ref({
@@ -53,9 +57,9 @@ const error = ref({
 })
 
 // SORTING TO DO LIST
-const sortedTodoList = computed(() => [...toDoList.value].sort((a, b) => {
-  return b.createdAt - a.createdAt;
-}))
+// const sortedTodoList = computed(() => [...toDoList.value].sort((a, b) => {
+//   return b.createdAt - a.createdAt;
+// }))
 
 const getDuplicateItem = computed(() => {
   let duplicate = toDoList.value.find(td => td.item.toLowerCase() === toDo.value.toLowerCase())
@@ -68,7 +72,7 @@ const submitToDo = () => {
   if(editTodo.value === null && !getDuplicateItem.value){
     if(toDo.value.trim() !== ''){
       toDoList.value.push({
-        id: itemId.value += 1,
+        // id: itemId.value += 1,
         item: toDo.value,
         completed: false,
         createdAt: new Date().getTime()
@@ -111,7 +115,13 @@ watch(toDo, newVal => {
 
 // SAVE TO DO LIST IN LOCAL STORAGE
 watch(toDoList, newVal => {
+    if(newVal){
+        sortedTodoList.value = newVal.sort((a, b) => {
+            return b.createdAt - a.createdAt;
+        })
+    }
   localStorage.setItem('todos', JSON.stringify(newVal))
+  console.log(sortedTodoList.value, 'to');
 }, {deep: true})
 
 
