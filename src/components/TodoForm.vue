@@ -12,9 +12,14 @@
           <p v-if="error.duplicate" class="text-red-600 pb-4">{{ error.duplicate }}</p>
         </div>
         <template v-if="toDoList.length">
-          <div v-for="(todo, index) in toDoList" :key="index"  class="mt-4 p-2 rounded-md bg-purple-50">
-            <TodoList :toDo="todo" />
-          </div>
+          <TodoList 
+            v-for="(todo, index) in sortedTodoList" 
+            :key="todo.id" 
+            :toDo="todo" 
+            :index="index" 
+            @update-todo="updateTodo" 
+            @delete-todo="deleteTodo"  
+            class="mt-4 p-2 rounded-md bg-purple-50" />
         </template>
       </div>
     </div>
@@ -34,23 +39,71 @@ const error = ref({
 })
 
 // SORTING TO DO LIST
-// const sortedTodoList = computed(() => [...toDoList.value].sort((a, b) => {
-//   return b.createdAt - a.createdAt;
-// }))
+const sortedTodoList = computed(() => [...toDoList.value].sort((a, b) => {
+  return b.createdAt - a.createdAt;
+}))
+
+const getDuplicateItem = computed(() => {
+  let duplicate = toDoList.value.find(td => td.item.toLowerCase() === toDo.value.toLowerCase())
+  return duplicate;
+})
 
 
 // ADD TO DO
 const submitToDo = () => {
-  if(toDo.value.trim() !== ''){
+  // SAVE NEW TO DO
+  if(editTodo.value === null && !getDuplicateItem.value){
+    let itemId = "id" + Math.random().toString(16).slice(2)
+    if(toDo.value.trim() !== ''){
       toDoList.value.push({
+        id: itemId,
         item: toDo.value,
         completed: false,
         createdAt: new Date().getTime()
       })
       toDo.value = ''
+    }else {
+      error.value.emptyTodo = 'Please enter a value'
     }
+  }
+
+  // CHECKING DUPLICATE ITEM
+  if(getDuplicateItem.value){
+    return
+  }
+
+  // TO SAVE UPDATED TO DO
+  if (editTodo.value !== null){
+  const items = toDoList.value.find(todo => todo.id === editTodo.value)
+  items.item = toDo.value
+  editTodo.value = null
+  toDo.value = ''
+  return
+  }
 }
 
+// SETTING ERROR
+watch(toDo, newVal => {
+  if(newVal) {
+    if(toDo.value !== ''){
+      error.value.emptyTodo = ''
+    }
+    if(getDuplicateItem.value && editTodo.value === null){
+      error.value.duplicate = 'Task is already added in the list'
+    }else {
+      error.value.duplicate = ''
+    }
+  }
+})
+
+const updateTodo = (index) => {
+  toDo.value = sortedTodoList.value[index].item
+  editTodo.value = sortedTodoList.value[index].id
+}
+
+const deleteTodo = (item) => {
+  toDoList.value = toDoList.value.filter(todo => todo != item)
+}
 
 // SAVE TO DO LIST IN LOCAL STORAGE
 watch(toDoList, newVal => {

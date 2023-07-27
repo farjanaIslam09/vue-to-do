@@ -28,25 +28,18 @@ const props = defineProps({
     toDo: Object,
     index: Number
 })
-const todoItem = ref({...props.toDo})
+const todoItem = ref(props.toDo)
 
-console.log(Object.keys(todoItem.value)[2]);
+// console.log(todoItem.value, 'val');
+// watch(todoItem, newVal => {
+//   console.log(newVal, 'value');
+//   if(newVal){
+//     todoItem.value = newVal
+//   }
+// }, {deep: true})
 
-// watch(props.toDo, newVal => {
-//   console.log(newVal);
-// })
-
-const obj = {
-  a: 'one',
-  b: 'two',
-  c: 'three',
-};
-
-// 👇️ ['c', 'b', 'a']
-const reversedKeys = Object.keys(todoItem.value).reverse();
-console.log(reversedKeys, 'reversed');
-
-reversedKeys.forEach(key => {
-  // console.log(key, obj[key]); 
-});
+watch(() => props.toDo, (first, second) => {
+  todoItem.value = second
+      console.log(first, 'value');
+    });
 </script>
