@@ -27,8 +27,13 @@
 </template>
 
 <script setup>
+import { useStore } from 'vuex';
 import TodoList from './TodoList.vue';
 import { ref, onMounted, computed, watch } from 'vue';
+
+const store = useStore()
+
+console.log(store.state.toDos, 'store');
 
 const toDo = ref('');
 const toDoList = ref([]);
