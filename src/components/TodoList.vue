@@ -4,7 +4,7 @@
           <div>
             <input type="checkbox" v-model="todoItem.completed" class="checkbox-bg">
           </div>
-          <p class="font-medium text-sm capitalize" :class="todoItem.completed && 'opacity-40'">{{ todoItem.item }}</p>
+          <p class="font-medium text-sm capitalize" :class="todoItem.completed && 'opacity-40'">{{ todoItem.task }}</p>
         </div>
         <div class="flex items-center gap-2">
           <button @click="$emit('update-todo', props.index)" :disabled="todoItem.completed">
@@ -22,7 +22,7 @@
   </template>
 
 <script setup>
-import { onMounted, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 
 const props = defineProps({
     toDo: Object,
@@ -30,15 +30,8 @@ const props = defineProps({
 })
 const todoItem = ref(props.toDo)
 
-// console.log(todoItem.value, 'val');
-// watch(todoItem, newVal => {
-//   console.log(newVal, 'value');
-//   if(newVal){
-//     todoItem.value = newVal
-//   }
-// }, {deep: true})
 
 watch(() => props.toDo, newVal => {
   todoItem.value = newVal
-    });
+});
 </script>

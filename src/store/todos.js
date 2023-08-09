@@ -11,18 +11,15 @@ export const mutations = {
         let taskId = "id" + Math.random().toString(16).slice(2)
         const newTask = {
             id:taskId,
-            item: payload,
+            task: payload,
             completed: false,
             createdAt: new Date().getTime()
         }
         state.toDos.unshift(newTask)
     },
-    TOGGLE_TODO: (state, payload) => {
-
-    },
     UPDATE_TODO: (state, payload) => {
-       let findItem = state.toDos.find(todo => todo.id === payload.updatedTask.id)
-       console.log(findItem, 'item');
+       let findItem = state.toDos.find(todo => todo.id === payload.id)
+       findItem.task = payload.task
     },
     DELETE_TODO: (state, payload) => {
         const index = state.toDos.findIndex(todo => todo.id === payload)
@@ -33,9 +30,6 @@ export const mutations = {
 export const actions = {
     addToDo: (context, payload) => {
         context.commit("ADD_TODO", payload)
-    },
-    toggleToDo: (context, payload) => {
-        context.commit("TOGGLE_TODO", payload)
     },
     updateToDo: (context, payload) => {
         context.commit("UPDATE_TODO", payload)
