@@ -156,7 +156,5 @@ function changePage(pageNumber) {
 .checkbox-bg {
   accent-color: rgb(85, 9, 85);
 }
-.disable-btn{
-  opacity: ;
-}
+
 </style>
